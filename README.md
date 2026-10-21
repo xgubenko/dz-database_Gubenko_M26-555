@@ -14,4 +14,11 @@ source .venv/bin/activate
 uv tool install dist/*.whl
 
 Убедитесь, что команда работает, запустив project в терминале.
- 
+project
+
+RUFF
+проверка проекта
+uv run ruff check .
+
+проверка одтельного файла
+uv run ruff check path/to/file.py 
