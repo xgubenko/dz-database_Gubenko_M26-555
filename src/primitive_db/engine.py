@@ -34,7 +34,6 @@ def run():
 
     while True:
         metadata = load_metadata(DB_METADATA_PATH)
-        print(metadata)
         user_input = prompt.string('Введите команду: ')
         args = shlex.split(user_input)
         cmd_name = args[0] if args else None
