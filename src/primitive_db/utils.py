@@ -6,8 +6,6 @@ from typing import Any
 Для вспомогательных функций
 """
 
-DB_METADATA_PATH = "db_meta.json"
-
 def load_metadata(filepath: str) -> dict:
     """Загружает метаданные из JSON-файла."""
     try:

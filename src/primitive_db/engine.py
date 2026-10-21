@@ -1,8 +1,14 @@
 import prompt
+import shlex
+from primitive_db.utils import load_metadata, save_metadata
+from primitive_db.core import create_table, drop_table
 
 """
 запуск, игровой цикл и парсинг команд
 """
+
+#Вся информация о таблицах (их имена и структура столбцов) будет храниться в одном файле
+DB_METADATA_PATH = "db_meta.json"
 
 def print_help():
     """Prints the help message for the current mode."""
@@ -15,20 +21,34 @@ def print_help():
     
     print("\nОбщие команды:")
     print("<command> exit - выход из программы")
-    print("<command> help - справочная информация\n") 
+    print("<command> help - справочная информация\n")
 
 def run():
     print("""
-    Первая попытка запустить проект!
+    Введите команду!
 
     ***
-    <command> exit - выйти из программы
-    <command> help - справочная информация
-    Введите команду: help
-
-    <command> exit - выйти из программы
-    <command> help - справочная информация
+    <command> create_table name asd:str
+    <command> drop_table name
     """)
 
-    name = prompt.string('Введите команду: ') 
-    print(name)
+    while True:
+        metadata = load_metadata(DB_METADATA_PATH)
+        print(metadata)
+        user_input = prompt.string('Введите команду: ')
+        args = shlex.split(user_input)
+        cmd_name = args[0] if args else None
+        match cmd_name:
+            case "create_table":
+                name = args[1]
+                columns = args[2:]
+                metadata = create_table(metadata, name, columns)
+                if metadata is not None:
+                    save_metadata(DB_METADATA_PATH, metadata)
+
+            case "drop_table":
+                name = args[1]
+                metadata = drop_table(metadata, name)
+                if metadata is not None:
+                    save_metadata(DB_METADATA_PATH, metadata)
+        
