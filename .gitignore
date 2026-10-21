@@ -1,5 +1,5 @@
  .venv
  .ruff_cache
  dist/
- __pycache__/
+ src/primitive_db/__pycache__/
  *.egg-info
