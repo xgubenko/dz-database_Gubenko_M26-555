@@ -24,14 +24,8 @@ def print_help():
     print("<command> help - справочная информация\n")
 
 def run():
-    print("""
-    Введите команду!
-
-    ***
-    <command> create_table name asd:str
-    <command> drop_table name
-    """)
-
+    print("Добро пожаловать в PrimitiveDB!")
+    
     while True:
         metadata = load_metadata(DB_METADATA_PATH)
         user_input = prompt.string('Введите команду: ')
@@ -50,4 +44,18 @@ def run():
                 metadata = drop_table(metadata, name)
                 if metadata is not None:
                     save_metadata(DB_METADATA_PATH, metadata)
-        
+
+            case "list_tables":
+                if metadata:
+                    print("Список таблиц:")
+                    for table_name in metadata.keys():
+                        print(f"- {table_name}")
+                else:
+                    print("Нет таблиц.")
+
+            case "help":
+                print_help()
+
+            case "exit":
+                print("Выход из программы.")
+                break

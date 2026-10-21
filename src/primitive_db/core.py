@@ -13,7 +13,17 @@ def create_table(metadata: dict[str, list[str]], table_name: str, columns: list[
     if table_name in metadata:
         print(f"Таблица '{table_name}' уже существует.")
         return
-    columns.insert(0, "ID:int")
+
+    col_names = {col.split(":")[0] for col in columns}
+    if "ID" not in col_names:
+        columns.insert(0, "ID:int")
+    else:
+        for idx, col in enumerate(columns):
+            if col.startswith("ID:"):
+                columns.insert(0, columns.pop(idx))
+                break
+
+
     correct_types = {"int", "str", "bool"}
     for column in columns:
         dtype = column.split(":")[1]
