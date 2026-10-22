@@ -1,8 +1,9 @@
+from primitive_db.utils import can_convert_to_bool, can_convert_to_int
+
 """
 Основная логика работы с таблицами и данными
 """
 
-from primitive_db.utils import load_table_data
 
 
 def create_table(metadata: dict[str, list[str]], table_name: str, columns: list[str]) \
@@ -59,7 +60,6 @@ def insert(metadata: dict[str, list[str]], table_name: str, values: list) -> dic
     if table_name not in metadata:
         print(f"Таблица '{table_name}' не существует.")
         return
-
     columns = metadata[table_name]
     if len(values) != len(columns) - 1:
         print("Количество значений не соответствует количеству столбцов") +\
@@ -68,25 +68,18 @@ def insert(metadata: dict[str, list[str]], table_name: str, values: list) -> dic
 
     for i, column in enumerate(columns[1:]):
         col_name, col_type = column.split(":")
-        if col_type == "int" and not isinstance(values[i], int):
+        if col_type == "int" and not can_convert_to_int(values[i]):
             print(f"Некорректный тип данных для столбца '{col_name}': ожидался int.")
             return
-        elif col_type == "str" and not isinstance(values[i], str):
-            print(f"Некорректный тип данных для столбца '{col_name}': ожидался str.")
-            return
-        elif col_type == "bool" and not isinstance(values[i], bool):
+        elif col_type == "bool" and not can_convert_to_bool(values[i]):
             print(f"Некорректный тип данных для столбца '{col_name}': ожидался bool.")
             return
-
-    table_data = load_table_data(table_name)
-    id = max([record["ID"] for record in table_data] + [0]) + 1
-    new_record = {"ID": id}
+        
+    new_record = {}
     for i, column in enumerate(columns[1:]):
-        col_name = column.split(":")[0]
-        new_record[col_name] = values[i]
+        new_record[column] = values[i]
 
-    table_data.append(new_record)
-    return table_data
+    return new_record
 
 def select(table_data: list[dict], where_clause: dict=None) -> list[dict]:
     """Возвращает все записи из таблицы, удовлетворяющие условию where_clause.
@@ -99,6 +92,7 @@ def select(table_data: list[dict], where_clause: dict=None) -> list[dict]:
     for record in table_data:
         if all(record.get(key) == value for key, value in where_clause.items()):
             filtered_data.append(record)
+
     return filtered_data
 
 def update(table_data: list[dict], set_clause: dict, where_clause: dict) -> list[dict]:

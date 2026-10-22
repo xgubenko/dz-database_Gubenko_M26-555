@@ -1,9 +1,17 @@
 import shlex
+from unittest import result
 
 import prompt
+from prettytable import PrettyTable
 
-from primitive_db.core import create_table, drop_table
-from primitive_db.utils import load_metadata, save_metadata
+from primitive_db.core import create_table, drop_table, insert, select
+from primitive_db.parser import parse_command
+from primitive_db.utils import (
+    load_metadata,
+    load_table_data,
+    save_metadata,
+    save_table_data,
+)
 
 """
 запуск, игровой цикл и парсинг команд
@@ -27,12 +35,20 @@ def print_help():
 
 def run():
     print("Добро пожаловать в PrimitiveDB!")
-    
+
     while True:
         metadata = load_metadata(DB_METADATA_PATH)
         user_input = prompt.string('Введите команду: ')
         args = shlex.split(user_input)
         cmd_name = args[0] if args else None
+
+        if args[0] == "insert" and args[1] == "into":
+            cmd_name = "insert into"
+        elif args[0] == "delete" and args[1] == "from":
+            cmd_name = "delete from"
+        elif args[0] == "select" and args[1] == "from":
+            cmd_name = "select from"
+
         match cmd_name:
             case "create_table":
                 name = args[1]
@@ -61,3 +77,43 @@ def run():
             case "exit":
                 print("Выход из программы.")
                 break
+
+            case "insert into":
+                metadata = load_metadata(DB_METADATA_PATH)
+                insert_args = " ".join(args[4:])[1:-1].split(",")
+                insert_args = [x.strip() for x in insert_args]
+                table_name = args[2]
+
+                new_record = insert(metadata, table_name, insert_args)
+                table_data = load_table_data(table_name)
+                id = max([record["ID"] for record in table_data] + [0]) + 1
+                new_record["ID"] = id
+                table_data.append(new_record)
+                print(f"Запись успешно добавлена в таблицу '{table_name}': {new_record}")
+                save_table_data(table_name, table_data)
+
+            case "select from":
+                if(len(args) < 3):
+                        print("Введенная команда некорректна")
+                        continue
+                
+                metadata = load_metadata(DB_METADATA_PATH)
+                table_data = load_table_data(args[2])
+                table_name, _, where_clause = parse_command(user_input)
+                selected_records = select(table_data, where_clause)
+
+                if selected_records:
+                    table = PrettyTable()
+                    table.field_names = selected_records[0].keys()
+                    for record in selected_records:
+                        table.add_row(record.values())
+                    if not table.rows:
+                        print("Таблица пуста")
+                    else: 
+                        print(table)
+                        
+            case "update":
+                pass
+
+            case "delete drom":
+                pass
