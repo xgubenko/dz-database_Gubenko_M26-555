@@ -11,13 +11,13 @@ from primitive_db.utils import (
     save_metadata,
     save_table_data,
 )
+from primitive_db.constants import DB_METADATA_PATH
 
 """
 запуск, игровой цикл и парсинг команд
 """
 
-#Вся информация о таблицах (их имена и структура столбцов) будет храниться в одном файле
-DB_METADATA_PATH = "db_meta.json"
+
 
 def print_help():
     """Prints the help message for the current mode."""

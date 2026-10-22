@@ -1,6 +1,7 @@
 from primitive_db.decorators import confirm_action, handle_db_errors, log_time
 from primitive_db.utils import can_convert_to_bool, can_convert_to_int
-
+from primitive_db.constants import DB_TABLE_STORAGE_PATH
+from pathlib import Path
 """
 Основная логика работы с таблицами и данными
 """
@@ -50,6 +51,10 @@ def drop_table(metadata: dict[str, list[str]], table_name: str) \
         print(f"Таблица '{table_name}' не существует.")
         return
     del metadata[table_name]
+    table_path = Path(f"{DB_TABLE_STORAGE_PATH}/{table_name}.json")
+    if table_path.exists():
+        table_path.unlink()
+
     return metadata
 
 @log_time

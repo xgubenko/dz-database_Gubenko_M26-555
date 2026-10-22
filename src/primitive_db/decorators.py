@@ -4,6 +4,7 @@ import prompt
 
 
 def handle_db_errors(func):
+    """Декоратор, обработка ошибок"""
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
@@ -18,6 +19,7 @@ def handle_db_errors(func):
     return wrapper
 
 def confirm_action(action_name: str):
+    """Декоратор, подтверждение исполнения"""
     def decorator(func):
         def wrapper(*args, **kwargs):
             user_input = prompt.string(f'Вы уверены, что хотите выполнить "{action_name}"? [y/n]:')
@@ -31,6 +33,7 @@ def confirm_action(action_name: str):
     return decorator
 
 def log_time(func):
+    """Декоратор, логирование времени исполнения"""
     def wrapper(*args, **kwargs):
         start = time.monotonic()
         try:
@@ -44,6 +47,7 @@ def log_time(func):
     return wrapper
 
 def create_cacher():
+    """Декоратор, кеширование"""
     cache = {}
 
     def cache_result(key, value_func):

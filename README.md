@@ -124,3 +124,7 @@ insert into <имя_таблицы> values (<значение1>, <значени
 update <имя_таблицы> set <столбец1> = <новое_значение1> where <столбец_условия> = <значение_условия> - обновить запись.
 ### delete
 delete from <имя_таблицы> where <столбец> = <значение> - удалить запись.
+
+## Работа декораторов
+### asciinema
+[![Демонстрация работы Primitive DB](https://asciinema.org/a/8xF9tDk5xgq24PEg.svg)](https://asciinema.org/a/xB7XZ8m4Z1bDC5zp)
