@@ -3,8 +3,8 @@ import shlex
 import prompt
 from prettytable import PrettyTable
 
-from primitive_db.core import create_table, drop_table, insert, select
-from primitive_db.parser import parse_command
+from primitive_db.core import create_table, drop_table, insert, select, update, delete
+from primitive_db.parser import parse_command_select, parse_command_update
 from primitive_db.utils import (
     load_metadata,
     load_table_data,
@@ -88,8 +88,8 @@ def run():
                 id = max([record["ID"] for record in table_data] + [0]) + 1
                 new_record["ID"] = id
                 table_data.append(new_record)
-                print(f"Запись успешно добавлена в таблицу '{table_name}': {new_record}")
                 save_table_data(table_name, table_data)
+                print (f'Запись с ID={id} успешно добавлена в таблицу "{table_name}".')
 
             case "select from":
                 if(len(args) < 3):
@@ -97,8 +97,8 @@ def run():
                         continue
                 
                 metadata = load_metadata(DB_METADATA_PATH)
-                table_data = load_table_data(args[2])
-                table_name, _, where_clause = parse_command(user_input, metadata)
+                table_name, where_clause = parse_command_select(user_input, metadata)
+                table_data = load_table_data(table_name)
                 selected_records = select(table_data, where_clause)
 
                 if selected_records:
@@ -111,7 +111,17 @@ def run():
                     print("Не получилось выбрать записи")
 
             case "update":
-                pass
+                # update <имя_таблицы> set <столбец1> = <новое_значение1> where <столбец_условия> = <значение_условия> - обновить запись.
+                if(len(args) < 6):
+                    print("Введенная команда некорректна")
+                    continue
+                metadata = load_metadata(DB_METADATA_PATH)
+                table_name, set_clause, where_clause = parse_command_update(user_input, metadata)
+                table_data = load_table_data(table_name)
+                table_data_updated, ids = update(table_data, set_clause, where_clause)
+                for id in ids:
+                    print(f'Запись с ID={id} в таблице "{table_name}" успешно обновлена.')
+                save_table_data(table_name, table_data)
 
             case "delete drom":
                 pass
