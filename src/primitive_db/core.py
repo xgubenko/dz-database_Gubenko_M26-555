@@ -74,9 +74,15 @@ def insert(metadata: dict[str, list[str]], table_name: str, values: list) -> dic
         elif col_type == "bool" and not can_convert_to_bool(values[i]):
             print(f"Некорректный тип данных для столбца '{col_name}': ожидался bool.")
             return
+        if(col_type == "int"):
+                    values[i] = int(values[i])
+        if(col_type == "bool"):
+            values[i] = bool(values[i])
         
     new_record = {}
     for i, column in enumerate(columns[1:]):
+        print(values[i])
+        
         new_record[column.split(":")[0]] = values[i]
 
     return new_record
