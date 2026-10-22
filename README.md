@@ -1,5 +1,9 @@
 # Primitive DB
 
+## asciinema
+
+[![Демонстрация работы Primitive DB](https://asciinema.org/a/8xF9tDk5xgq24PEg.svg)](https://asciinema.org/a/8xF9tDk5xgq24PEg)
+
 ## Запуск проекта
 
 Запустить модуль проекта:
