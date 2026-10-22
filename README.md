@@ -110,3 +110,17 @@ uv run ruff check path/to/file.py
 ```
 
 Замените `path/to/file.py` на путь к проверяемому Python-файлу.
+
+## CRUD-операции
+### asciinema
+
+[![Демонстрация работы Primitive DB](https://asciinema.org/a/8xF9tDk5xgq24PEg.svg)](https://asciinema.org/a/bCycLjdRhe6lNJoz)
+### select
+select from <имя_таблицы> where <столбец> = <значение> - прочитать записи по условию.
+select from <имя_таблицы> - прочитать все записи.
+### insert
+insert into <имя_таблицы> values (<значение1>, <значение2>, ...) - создать запись.
+### update
+update <имя_таблицы> set <столбец1> = <новое_значение1> where <столбец_условия> = <значение_условия> - обновить запись.
+### delete
+delete from <имя_таблицы> where <столбец> = <значение> - удалить запись.
