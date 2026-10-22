@@ -1,7 +1,9 @@
-import prompt
 import shlex
-from primitive_db.utils import load_metadata, save_metadata
+
+import prompt
+
 from primitive_db.core import create_table, drop_table
+from primitive_db.utils import load_metadata, save_metadata
 
 """
 запуск, игровой цикл и парсинг команд
