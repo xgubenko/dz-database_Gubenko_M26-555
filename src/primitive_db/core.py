@@ -1,3 +1,4 @@
+from primitive_db.decorators import confirm_action, handle_db_errors, log_time
 from primitive_db.utils import can_convert_to_bool, can_convert_to_int
 
 """
@@ -5,7 +6,7 @@ from primitive_db.utils import can_convert_to_bool, can_convert_to_int
 """
 
 
-
+@handle_db_errors
 def create_table(metadata: dict[str, list[str]], table_name: str, columns: list[str]) \
       -> dict[str, list[str]]:
     """Создает новую таблицу с указанными столбцами.
@@ -38,6 +39,8 @@ def create_table(metadata: dict[str, list[str]], table_name: str, columns: list[
     metadata[table_name] = columns
     return metadata
 
+@confirm_action("удаление таблицы")
+@handle_db_errors
 def drop_table(metadata: dict[str, list[str]], table_name: str) \
       -> dict[str, list[str]]:
     """Проверяет существование таблицы. Если таблицы нет, выводит ошибку.
@@ -49,6 +52,8 @@ def drop_table(metadata: dict[str, list[str]], table_name: str) \
     del metadata[table_name]
     return metadata
 
+@log_time
+@handle_db_errors
 def insert(metadata: dict[str, list[str]], table_name: str, values: list) -> dict:
     """Проверяет, существует ли таблица.
     Проверяет, что количество переданных значений соответствует 
@@ -85,6 +90,8 @@ def insert(metadata: dict[str, list[str]], table_name: str, values: list) -> dic
 
     return new_record
 
+@log_time
+@handle_db_errors
 def select(table_data: list[dict], where_clause: dict=None) -> list[dict]:
     """Возвращает все записи из таблицы, удовлетворяющие условию where_clause.
     Если where_clause не задан, возвращает все записи.
@@ -97,8 +104,10 @@ def select(table_data: list[dict], where_clause: dict=None) -> list[dict]:
         if all(record.get(key) == value for key, value in where_clause.items()):
             filtered_data.append(record)
 
+    
     return filtered_data
 
+@handle_db_errors
 def update(table_data: list[dict], set_clause: dict, where_clause: dict) -> tuple[list[dict], list[int]]:
     """Обновляет записи в таблице, удовлетворяющие условию where_clause.
     set_clause - словарь с новыми значениями для обновления.
@@ -111,6 +120,8 @@ def update(table_data: list[dict], set_clause: dict, where_clause: dict) -> tupl
                 ids.append(record["ID"])
     return table_data, ids
 
+@confirm_action("удаление записи")
+@handle_db_errors
 def delete(table_data: list[dict], where_clause: dict) -> tuple[list[dict], list[int]]:
     """Удаляет записи из таблицы, удовлетворяющие условию where_clause."""
     ids = []
