@@ -77,7 +77,7 @@ def insert(metadata: dict[str, list[str]], table_name: str, values: list) -> dic
         
     new_record = {}
     for i, column in enumerate(columns[1:]):
-        new_record[column] = values[i]
+        new_record[column.split(":")[0]] = values[i]
 
     return new_record
 
@@ -99,6 +99,8 @@ def update(table_data: list[dict], set_clause: dict, where_clause: dict) -> list
     """Обновляет записи в таблице, удовлетворяющие условию where_clause.
     set_clause - словарь с новыми значениями для обновления.
     """
+    # update <имя_таблицы> set <столбец1> = <новое_значение1> where <столбец_условия> = <значение_условия> - обновить запись.
+
     for record in table_data:
         if all(record.get(key) == value for key, value in where_clause.items()):
             for key, value in set_clause.items():
@@ -106,6 +108,7 @@ def update(table_data: list[dict], set_clause: dict, where_clause: dict) -> list
     return table_data
 
 def delete(table_data: list[dict], where_clause: dict) -> list[dict]:
+    # delete from <имя_таблицы> where <столбец> = <значение> - удалить запись.
     """Удаляет записи из таблицы, удовлетворяющие условию where_clause."""
     return [record for record in table_data if not all(record.get(key) == value\
         for key, value in where_clause.items())]

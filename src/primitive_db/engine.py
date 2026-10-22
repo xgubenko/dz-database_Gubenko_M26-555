@@ -87,7 +87,7 @@ def run():
                 new_record = insert(metadata, table_name, insert_args)
                 table_data = load_table_data(table_name)
                 id = max([record["ID"] for record in table_data] + [0]) + 1
-                new_record["ID"] = id
+                new_record["ID"] = str(id)
                 table_data.append(new_record)
                 print(f"Запись успешно добавлена в таблицу '{table_name}': {new_record}")
                 save_table_data(table_name, table_data)
@@ -111,7 +111,7 @@ def run():
                         print("Таблица пуста")
                     else: 
                         print(table)
-                        
+
             case "update":
                 pass
 
