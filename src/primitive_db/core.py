@@ -103,7 +103,6 @@ def update(table_data: list[dict], set_clause: dict, where_clause: dict) -> tupl
     """Обновляет записи в таблице, удовлетворяющие условию where_clause.
     set_clause - словарь с новыми значениями для обновления.
     """
-    # update <имя_таблицы> set <столбец1> = <новое_значение1> where <столбец_условия> = <значение_условия> - обновить запись.
     ids = []
     for record in table_data:
         if all(record.get(key) == value for key, value in where_clause.items()):
@@ -112,10 +111,15 @@ def update(table_data: list[dict], set_clause: dict, where_clause: dict) -> tupl
                 ids.append(record["ID"])
     return table_data, ids
 
-def delete(table_data: list[dict], where_clause: dict) -> list[dict]:
-    # delete from <имя_таблицы> where <столбец> = <значение> - удалить запись.
+def delete(table_data: list[dict], where_clause: dict) -> tuple[list[dict], list[int]]:
     """Удаляет записи из таблицы, удовлетворяющие условию where_clause."""
-    return [record for record in table_data if not all(record.get(key) == value\
-        for key, value in where_clause.items())]
+    ids = []
+    updated_data = []
+    for record in table_data:
+        if all(record.get(key) == value for key, value in where_clause.items()):
+                ids.append(record["ID"])
+        else:
+            updated_data.append(record)
+    return updated_data, ids
 
         

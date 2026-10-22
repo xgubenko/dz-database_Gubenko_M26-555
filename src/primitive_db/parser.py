@@ -1,7 +1,7 @@
 #<command> update <имя_таблицы> set <столбец1> = <новое_значение1> 
 # where <столбец_условия> = <значение_условия> - обновить запись.
 
-def parse_command_select(command: str, metadata: dict) -> tuple[str, dict, dict]:
+def parse_command(command: str, metadata: dict) -> tuple[str, dict, dict]:
     """Парсит команду и возвращает ее составляющие."""
     parts = command.split()
     

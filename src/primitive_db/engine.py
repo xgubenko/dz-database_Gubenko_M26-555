@@ -3,8 +3,8 @@ import shlex
 import prompt
 from prettytable import PrettyTable
 
-from primitive_db.core import create_table, drop_table, insert, select, update, delete
-from primitive_db.parser import parse_command_select, parse_command_update
+from primitive_db.core import create_table, delete, drop_table, insert, select, update
+from primitive_db.parser import parse_command, parse_command_update
 from primitive_db.utils import (
     load_metadata,
     load_table_data,
@@ -33,7 +33,19 @@ def print_help():
     print("<command> help - справочная информация\n")
 
 def run():
-    print("Добро пожаловать в PrimitiveDB!")
+    print("""Добро пожаловать в PrimitiveDB!
+    
+    Функции:
+    <command> insert into <имя_таблицы> values (<значение1>, <значение2>, ...) - создать запись.
+    <command> select from <имя_таблицы> where <столбец> = <значение> - прочитать записи по условию.
+    <command> select from <имя_таблицы> - прочитать все записи.
+    <command> update <имя_таблицы> set <столбец1> = <новое_значение1> 
+    where <столбец_условия> = <значение_условия> - обновить запись.
+    <command> delete from <имя_таблицы> where <столбец> = <значение> - удалить запись.
+    <command> info <имя_таблицы> - вывести информацию о таблице.
+    <command> exit - выход из программы
+    <command> help- справочная информация
+    """)
 
     while True:
         metadata = load_metadata(DB_METADATA_PATH)
@@ -97,7 +109,7 @@ def run():
                         continue
                 
                 metadata = load_metadata(DB_METADATA_PATH)
-                table_name, where_clause = parse_command_select(user_input, metadata)
+                table_name, where_clause = parse_command(user_input, metadata)
                 table_data = load_table_data(table_name)
                 selected_records = select(table_data, where_clause)
 
@@ -111,7 +123,6 @@ def run():
                     print("Не получилось выбрать записи")
 
             case "update":
-                # update <имя_таблицы> set <столбец1> = <новое_значение1> where <столбец_условия> = <значение_условия> - обновить запись.
                 if(len(args) < 6):
                     print("Введенная команда некорректна")
                     continue
@@ -121,7 +132,31 @@ def run():
                 table_data_updated, ids = update(table_data, set_clause, where_clause)
                 for id in ids:
                     print(f'Запись с ID={id} в таблице "{table_name}" успешно обновлена.')
-                save_table_data(table_name, table_data)
+                save_table_data(table_name, table_data_updated)
 
-            case "delete drom":
-                pass
+            case "delete from":
+                if(len(args) < 7):
+                    print("Введенная команда некорректна")
+                    continue
+                metadata = load_metadata(DB_METADATA_PATH)
+                table_name, where_clause = parse_command(user_input, metadata)
+                table_data = load_table_data(table_name)
+                table_data_updated, ids = delete(table_data, where_clause)
+                for id in ids:
+                    print(f'Запись с ID={id} успешно удалена из таблицы "{table_name}".')
+                save_table_data(table_name, table_data_updated)
+
+            case "info":
+                if(len(args) < 2):
+                    print("Введенная команда некорректна")
+                    continue
+                metadata = load_metadata(DB_METADATA_PATH)
+                table_name = args[1]
+                
+                if table_name not in metadata:
+                    print("Таблица отсутствует")
+                    continue
+                table_data = load_table_data(table_name)
+                print(f"Таблица: {table_name}")
+                print(f"Столбцы: {metadata.get(table_name)}")
+                print(f"Количество записей: {len(table_data)}")
