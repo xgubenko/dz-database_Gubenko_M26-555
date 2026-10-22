@@ -81,8 +81,6 @@ def insert(metadata: dict[str, list[str]], table_name: str, values: list) -> dic
         
     new_record = {}
     for i, column in enumerate(columns[1:]):
-        print(values[i])
-        
         new_record[column.split(":")[0]] = values[i]
 
     return new_record

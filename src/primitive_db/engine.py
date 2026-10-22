@@ -1,5 +1,4 @@
 import shlex
-from unittest import result
 
 import prompt
 from prettytable import PrettyTable
@@ -99,7 +98,7 @@ def run():
                 
                 metadata = load_metadata(DB_METADATA_PATH)
                 table_data = load_table_data(args[2])
-                table_name, _, where_clause = parse_command(user_input)
+                table_name, _, where_clause = parse_command(user_input, metadata)
                 selected_records = select(table_data, where_clause)
 
                 if selected_records:
@@ -107,10 +106,9 @@ def run():
                     table.field_names = selected_records[0].keys()
                     for record in selected_records:
                         table.add_row(record.values())
-                    if not table.rows:
-                        print("Таблица пуста")
-                    else: 
-                        print(table)
+                    print(table)
+                else:
+                    print("Не получилось выбрать записи")
 
             case "update":
                 pass
